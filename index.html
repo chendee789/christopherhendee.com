@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Christopher Hendee — Mechanical &amp; Test Engineer</title>
+  <meta name="description" content="Portfolio of Christopher Hendee, Test Engineer at Electric Hydrogen, focused on energy systems, controls, and thermo-fluid engineering." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#about" class="logo">Christopher Hendee</a>
+      <nav class="site-nav">
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul id="navList">
+          <li><a href="#about">About</a></li>
+          <li><a href="#experience">Experience</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#leadership">Leadership</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ABOUT -->
+    <section id="about" class="hero">
+      <div class="container">
+        <p class="eyebrow">Mechanical Engineer &middot; Test &amp; Controls</p>
+        <h1>Christopher Hendee</h1>
+        <p class="lead">
+          I'm a Test Engineer at Electric Hydrogen, where I work on product-scale PEM electrolysis
+          systems. My background is in thermo-fluid and controls engineering, and I'm drawn to test
+          engineering specifically because of the constant, novel problem-solving it demands.
+        </p>
+        <p class="lead">
+          Outside of work, I've spent four years competing in the Department of Energy's Solar
+          Decathlon, earning a finalist position all four years and leading the MEP and Energy
+          Systems teams in 2023 and 2024.
+        </p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary">Get in touch</a>
+          <a href="#experience" class="btn btn-secondary">See my work</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="section">
+      <div class="container">
+        <h2>Experience</h2>
+
+        <article class="role">
+          <div class="role-heading">
+            <h3>Test Engineer</h3>
+            <span class="role-meta">Electric Hydrogen &middot; August 2024 – Present</span>
+          </div>
+          <p>
+            Lead controls engineer for four 800kW product-scale PEM electrolysis test systems.
+            Work spans troubleshooting test stand trips, fixing production code, leading code
+            reviews, and designing system improvements.
+          </p>
+          <ul class="role-highlights">
+            <li><strong>Hardware &amp; subsystem design</strong> — built a subsystem that dries, cools, and measures produced hydrogen gas to a 0.4% faradaic efficiency accuracy.</li>
+            <li><strong>Safety engineering</strong> — evaluated system safety through HAZOP and LOPA analysis and developed safety logic to meet SIL ratings.</li>
+            <li><strong>Tooling</strong> — built a modular, CSV-driven test scripting tool that runs each test system independently, significantly cutting the operational burden on test operators.</li>
+            <li><strong>Systems integration</strong> — integrated third-party equipment into the control architecture via Ethernet/IP, Modbus, ASCII, and BACnet, including a JCI building management system and retrofitted 250kW rectifiers.</li>
+            <li><strong>Infrastructure rollout</strong> — organized the rollout of new test stands into the network and FactoryTalk/Ignition infrastructure, helping drive systems to 97% uptime across a mix of novel R&amp;D and life testing.</li>
+            <li><strong>Field commissioning</strong> — traveled repeatedly to Texas to commission a 100MW PEM electrolysis plant, taking ownership of field instrumentation commissioning, cause-and-effect verification, and SIF validation, and writing the documentation handed off to the customer.</li>
+          </ul>
+        </article>
+
+        <div class="subsection">
+          <h3 class="subsection-title">Co-op Experience</h3>
+
+          <article class="role role-compact">
+            <div class="role-heading">
+              <h4>Test Engineering Co-op</h4>
+              <span class="role-meta">Electric Hydrogen &middot; July 2023 – December 2023</span>
+            </div>
+            <p>
+              Designed a system to perform passivation in-house per ASTM A967 Citric 1 — an early
+              version of the passivation project detailed below. Worked in a fast-paced R&amp;D
+              environment upgrading test systems by installing and wiring test stand equipment on
+              liquid and gas fluid systems.
+            </p>
+          </article>
+
+          <article class="role role-compact">
+            <div class="role-heading">
+              <h4>Application Engineer Co-op</h4>
+              <span class="role-meta">Applied Plastics</span>
+            </div>
+            <p>
+              Interacted directly with customers and designed parts based on their requests.
+              Designed several material characterization test plans using Instron and ADMET
+              testing machines. Familiarized myself with ISO practices in the medical device space,
+              including leading a daily cross-departmental meeting on active projects and
+              performing the ISO 13485 contract review process to ensure product quality. Created
+              new and revised manufacturing work instructions in compliance with ISO 13485:2016.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="section section-alt">
+      <div class="container">
+        <h2>Featured Projects</h2>
+        <div class="card-grid">
+          <article class="card">
+            <h3>Passivation System Design</h3>
+            <p class="card-tag">ASTM A967 Citric 1</p>
+            <p>
+              Designed and built a system to perform citric passivation in-house — previously an
+              outsourced process. Selected and sourced components for both the fluid and
+              electrical systems, and worked closely with EHS throughout to ensure chemical safety
+              and proper handling of waste.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Modular Test Scripting Tool</h3>
+            <p class="card-tag">CSV-driven &middot; Python</p>
+            <p>
+              Built a test scripting tool on a CSV-driven, modular architecture, allowing each of
+              the four test systems to run independently. Significantly reduced the day-to-day
+              operational burden on test operators.
+            </p>
+          </article>
+          <article class="card">
+            <h3>100MW Plant Commissioning</h3>
+            <p class="card-tag">Texas &middot; Field Engineering</p>
+            <p>
+              Traveled repeatedly to a customer site to commission a 100MW PEM electrolysis plant.
+              Took ownership of field instrumentation commissioning, cause-and-effect verification,
+              and SIF validation, and authored the documentation package handed off to the
+              customer.
+            </p>
+          </article>
+        </div>
+
+        <div class="subsection">
+          <h3 class="subsection-title">Academic Projects</h3>
+          <div class="card-grid">
+            <article class="card card-compact">
+              <h4>Autonomous Disinfecting Robot</h4>
+              <p>
+                Led a team of interdisciplinary engineers to develop and program (AutoCAD,
+                Arduino) an autonomous robot that wipes down a table once given a disinfectant
+                wipe. Tested multiple prototypes and conducted market research to identify
+                improvements over existing products.
+              </p>
+            </article>
+            <article class="card card-compact">
+              <h4>Timed Lockbox</h4>
+              <p>
+                Collaborated across engineering disciplines to develop and program (AutoCAD,
+                Arduino) a timed lockbox designed to remove distractions from a student's
+                workspace. Researched and sourced sensors to produce a competitive product.
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEADERSHIP -->
+    <section id="leadership" class="section">
+      <div class="container">
+        <h2>Leadership — Solar Decathlon</h2>
+        <p>
+          Submitted work to the Department of Energy for judging, earning a finalist position four
+          years in a row. Led the MEP and Energy Systems teams for the 2023 and 2024 competitions.
+        </p>
+        <p>
+          Through this experience, completed projects designing MEP systems in a zero-energy
+          building environment, following LEED, ASHRAE, and Massachusetts building regulations for
+          efficient energy buildings — including on-site solar array design and in-building energy
+          storage systems to account for brown/blackout situations.
+        </p>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="section section-alt">
+      <div class="container">
+        <h2>Skills</h2>
+        <div class="skills-grid">
+          <div class="skill-group">
+            <h3>Controls &amp; Software</h3>
+            <p>FactoryTalk, Ignition, AutoCAD, Arduino</p>
+          </div>
+          <div class="skill-group">
+            <h3>Communication Protocols</h3>
+            <p>Ethernet/IP, Modbus, ASCII, BACnet</p>
+          </div>
+          <div class="skill-group">
+            <h3>Safety &amp; Compliance</h3>
+            <p>HAZOP, LOPA, SIL/SIF analysis, ISO 13485:2016</p>
+          </div>
+          <div class="skill-group">
+            <h3>Test Equipment</h3>
+            <p>Instron, ADMET</p>
+          </div>
+          <div class="skill-group">
+            <h3>Standards &amp; Design</h3>
+            <p>ASTM A967, LEED, ASHRAE</p>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h3 class="subsection-title">Education</h3>
+          <p><strong>B.S. Mechanical Engineering</strong> — Northeastern University, 2024</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="section">
+      <div class="container">
+        <h2>Contact</h2>
+        <p>
+          Interested in working together or just want to connect? Reach out by email.
+        </p>
+        <a href="mailto:christopherhendee01@gmail.com" class="btn btn-primary">
+          christopherhendee01@gmail.com
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Christopher Hendee. Built from scratch.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
