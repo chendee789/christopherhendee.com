@@ -1,0 +1,28 @@
+# This site intentionally opts out of indexing and AI-training crawling.
+# It's meant to be shared as a direct link, not discovered via search.
+
+# Anthropic's Claude-User crawler fetches a page live when someone asks
+# Claude to look at it (e.g. "hey Claude, check christopherhendee.com").
+# That's allowed on purpose.
+User-agent: Claude-User
+Allow: /
+
+# Anthropic's other two crawlers are blocked:
+# - ClaudeBot: collects content for AI model training.
+# - Claude-SearchBot: crawls for Claude's search/answer features.
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-SearchBot
+Disallow: /
+
+# Everything else — search engines (Googlebot, Bingbot), other AI crawlers
+# (GPTBot, CCBot, Google-Extended, Bytespider, PerplexityBot, etc.), and any
+# unlisted bot — is disallowed by default.
+User-agent: *
+Disallow: /
+
+# Note: robots.txt is a request that well-behaved crawlers honor voluntarily.
+# It is not an access-control mechanism — it can't stop a scraper that
+# chooses to ignore it. See the README for what this setup does and doesn't
+# protect against.
