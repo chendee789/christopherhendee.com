@@ -5,15 +5,15 @@
 
 :root {
   --color-bg: #ffffff;
-  --color-bg-alt: #f5f7f9;
-  --color-text: #1c2530;
-  --color-text-muted: #55626f;
-  --color-primary: #0d5c63;      /* deep teal — energy/engineering feel */
-  --color-primary-dark: #093f44;
-  --color-accent: #e8b64c;       /* warm accent, used sparingly */
-  --color-border: #e1e6ea;
+  --color-bg-alt: #ecfdf5;       /* soft green tint — climate tech direction */
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+  --color-primary: #059669;      /* nature green — sustainable energy palette */
+  --color-primary-dark: #064e3b;
+  --color-accent: #059669;       /* solar gold (#fbbf24) fails WCAG contrast here, so accent matches primary */
+  --color-border: #dbe9e2;       /* neutral border with a faint green cast */
 
-  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   --max-width: 960px;
   --radius: 8px;
@@ -326,6 +326,12 @@ a {
 /* -------------------------------------------------
    Footer
 ------------------------------------------------- */
+
+.contact-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
 
 .site-footer {
   padding: 32px 0;
