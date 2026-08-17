@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>In-house citric passivation system — Christopher Hendee</title>
+  <meta name="description" content="Case study: an in-house citric passivation system built to ASTM A967 Citric 1, replacing an outsourced pharmaceutical-grade vendor." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo">Christopher Hendee</a>
+      <nav class="site-nav">
+        <ul>
+          <li><a href="../index.html#projects">&larr; Back to portfolio</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero case-study-hero">
+      <div class="container">
+        <p class="eyebrow">Featured project</p>
+        <h1>In-house citric passivation system</h1>
+        <p class="lead">
+          ASTM A967 Citric 1. Built to replace an outsourced, pharmaceutical-grade passivation
+          process with an in-house skid, cutting turnaround from weeks to days.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container case-study-body">
+        <img src="../images/passivation-skid-cad.png" alt="CAD rendering of the passivation skid" class="case-study-image" />
+
+        <h2>Goal</h2>
+        <p>
+          Electric Hydrogen previously outsourced citric passivation to a pharmaceutical-grade
+          vendor with ISO certification, which was expensive and slow. The parts going through
+          the process needed to work in two demanding environments at once: a Type 1 ultrapure
+          water system and high-pressure hydrogen service. That meant the passivation process had
+          to meet ASTM A967 Citric 1 without leaving any contamination or a surface that would
+          fail under pressure.
+        </p>
+        <p>
+          I built an in-house system to replace the outsourced process. Turnaround dropped from
+          weeks to a few days, and the cost savings paid for the skid many times over. It later
+          became part of the standard manufacturing process, not just something used for test
+          equipment.
+        </p>
+
+        <h2>Mechanical build</h2>
+        <p>
+          The system is built around a 185 gallon tank. I designed the tank weldment and sent it
+          out for fabrication, along with the aluminum extrusion frame that supports it and the
+          piping that ties the skid together. I ran engineering load calculations on both the tank
+          weldment and the extrusion support to confirm the design would hold up under the actual
+          use case. Every wetted component, from the tank to the fittings and flow paths, had to
+          hold up chemically and thermally to the citric acid process without degrading or
+          contaminating the parts being cleaned.
+        </p>
+        <img src="../images/passivation-pid.png" alt="Process flow diagram of the passivation skid, showing the tank, valves, pumps, and heat exchanger" class="case-study-image case-study-image-diagram" />
+
+        <h2>Electrical build</h2>
+        <p>
+          Heating comes from a 208VAC resistive element, run on its own independent loop with a
+          shell-and-tube heat exchanger. That leaves room for an optional steam hookup if a larger
+          batch needs more heating capacity than the resistive element alone can provide. A
+          standalone PID controller manages the loop, and I wrote the program that runs it. I
+          designed the full electrical schematic and control logic; the physical panel build was
+          handled by a trained electrician, and I stayed only lightly involved in that part.
+        </p>
+        <div class="case-study-image-row">
+          <img src="../images/passivation-electrical.jpg" alt="Photo of the passivation skid's electrical enclosure" class="case-study-image" />
+          <img src="../images/passivation-electrical-1.png" alt="Wiring diagram for the heater and PID controller loop" class="case-study-image case-study-image-diagram" />
+          <img src="../images/passivation-electrical-2.png" alt="Wiring diagram for the pump loop" class="case-study-image case-study-image-diagram" />
+        </div>
+
+        <h2>Testing and validation</h2>
+        <p>
+          Early testing was informal: fill the tank, run the pumps, and check for leaks. Once
+          that passed, I ran the same test with the heating element active and cycled the
+          temperature to confirm nothing leaked under heat.
+        </p>
+        <p>
+          Validating the actual passivation result took more than a visual check. I used a
+          dedicated tester to confirm the passive layer had formed, backed by in-house SEM
+          imaging to verify the chromium oxide layer directly, and sent samples to a third party
+          to confirm the results independently. Over the course of validation, the process itself
+          got faster too: total run time dropped from about 8 hours to roughly 5 as I found ways
+          to tighten the steps.
+        </p>
+        <p>
+          Once validation was complete, I worked with the safety group to get the system approved
+          for unattended operation. The only manual step left is loading materials, chemicals,
+          and water.
+        </p>
+
+        <a href="../index.html#projects" class="btn btn-secondary case-study-back">&larr; Back to portfolio</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Christopher Hendee. Built from scratch.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>

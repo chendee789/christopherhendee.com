@@ -282,10 +282,47 @@ a {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 24px;
+  overflow: hidden;
 }
 
 .section-alt .card {
   background: #fff;
+}
+
+.card-image-link {
+  display: block;
+  margin: -24px -24px 16px -24px;
+}
+
+.card-compact .card-image-link,
+.card-compact .card-image {
+  margin: -20px -20px 16px -20px;
+}
+
+.card-image {
+  display: block;
+  width: calc(100% + 48px);
+  max-width: none;
+  height: 180px;
+  object-fit: cover;
+  margin: -24px -24px 16px -24px;
+}
+
+.card-compact .card-image {
+  width: calc(100% + 40px);
+  height: 160px;
+}
+
+.card-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.card-link:hover {
+  text-decoration: underline;
 }
 
 .card-compact {
@@ -321,6 +358,49 @@ a {
 
 .skill-group p {
   margin: 0;
+}
+
+/* -------------------------------------------------
+   Case study pages (e.g. projects/passivation.html)
+------------------------------------------------- */
+
+.case-study-body {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.case-study-image {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  margin: 28px 0;
+}
+
+.case-study-image-diagram {
+  background: #fff;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.case-study-image-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 28px 0;
+}
+
+.case-study-image-row .case-study-image {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  height: 220px;
+  object-fit: contain;
+}
+
+.case-study-back {
+  margin-top: 40px;
 }
 
 /* -------------------------------------------------
@@ -371,5 +451,14 @@ a {
 
   .hero {
     padding: 72px 0 48px;
+  }
+
+  .case-study-image-row {
+    flex-direction: column;
+  }
+
+  .case-study-image-row .case-study-image {
+    width: 100%;
+    height: auto;
   }
 }

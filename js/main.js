@@ -1,22 +1,28 @@
 // Footer year
-document.getElementById("year").textContent = new Date().getFullYear();
+const yearEl = document.getElementById("year");
+if (yearEl) {
+  yearEl.textContent = new Date().getFullYear();
+}
 
-// Mobile nav toggle
+// Mobile nav toggle — guarded because not every page (e.g. case study pages)
+// has the hamburger button or a multi-item nav to toggle.
 const navToggle = document.getElementById("navToggle");
 const siteNav = document.querySelector(".site-nav");
 
-navToggle.addEventListener("click", () => {
-  const isOpen = siteNav.classList.toggle("open");
-  navToggle.setAttribute("aria-expanded", isOpen);
-});
-
-// Close mobile nav after clicking a link
-document.querySelectorAll(".site-nav a").forEach((link) => {
-  link.addEventListener("click", () => {
-    siteNav.classList.remove("open");
-    navToggle.setAttribute("aria-expanded", "false");
+if (navToggle && siteNav) {
+  navToggle.addEventListener("click", () => {
+    const isOpen = siteNav.classList.toggle("open");
+    navToggle.setAttribute("aria-expanded", isOpen);
   });
-});
+
+  // Close mobile nav after clicking a link
+  document.querySelectorAll(".site-nav a").forEach((link) => {
+    link.addEventListener("click", () => {
+      siteNav.classList.remove("open");
+      navToggle.setAttribute("aria-expanded", "false");
+    });
+  });
+}
 
 // Contact email — built at runtime rather than written in the HTML/markup,
 // so basic scrapers that just read the raw page source don't pick it up
