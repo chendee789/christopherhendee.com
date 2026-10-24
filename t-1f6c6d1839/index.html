@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tracker.css" />
+</head>
+<body>
+
+  <!-- Not configured yet -->
+  <section id="screen-setup" class="screen center" hidden>
+    <div class="card narrow">
+      <h1>Almost there</h1>
+      <p class="muted">Add your Supabase project URL and anon key to <code>config.js</code>, then reload.</p>
+    </div>
+  </section>
+
+  <!-- One-time sign-in per device -->
+  <section id="screen-signin" class="screen center" hidden>
+    <form id="signinForm" class="card narrow">
+      <h1>Sign in</h1>
+      <p class="muted">Once per device. You'll use your PIN after this.</p>
+      <label>Email <input type="email" id="signinEmail" autocomplete="username" required /></label>
+      <label>Password <input type="password" id="signinPassword" autocomplete="current-password" required /></label>
+      <button class="btn btn-primary" type="submit">Sign in</button>
+      <p class="error" id="signinError"></p>
+    </form>
+  </section>
+
+  <!-- PIN set / unlock -->
+  <section id="screen-pin" class="screen center" hidden>
+    <div class="card narrow pin-card">
+      <h1 id="pinTitle">Enter PIN</h1>
+      <p class="muted" id="pinHint"></p>
+      <div class="pin-dots" id="pinDots"><span></span><span></span><span></span><span></span></div>
+      <div class="pin-pad" id="pinPad">
+        <button type="button">1</button><button type="button">2</button><button type="button">3</button>
+        <button type="button">4</button><button type="button">5</button><button type="button">6</button>
+        <button type="button">7</button><button type="button">8</button><button type="button">9</button>
+        <button type="button" class="ghost" data-key="clear">Clear</button>
+        <button type="button">0</button>
+        <button type="button" class="ghost" data-key="back">&larr;</button>
+      </div>
+      <p class="error" id="pinError"></p>
+      <button type="button" class="link" id="pinForgot">Forgot PIN? Sign out</button>
+    </div>
+  </section>
+
+  <!-- App -->
+  <section id="screen-app" class="screen" hidden>
+    <header class="app-header">
+      <div class="container header-row">
+        <div>
+          <div class="eyebrow" id="phaseLabel"></div>
+          <div class="targets" id="phaseTargets"></div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-small btn-secondary" id="lockBtn" type="button">Lock</button>
+        </div>
+      </div>
+      <nav class="container tabs" id="tabs">
+        <button type="button" data-tab="today" class="active">Today</button>
+        <button type="button" data-tab="workout">Workout</button>
+        <button type="button" data-tab="progress">Progress</button>
+        <button type="button" data-tab="history">History</button>
+      </nav>
+    </header>
+
+    <main class="container">
+
+      <!-- TODAY -->
+      <div class="tab-panel" id="tab-today">
+        <form id="dailyForm" class="card">
+          <div class="card-head">
+            <h2>Daily log</h2>
+            <input type="date" id="dailyDay" required />
+          </div>
+          <div class="grid-2">
+            <label>Weight (lb) <input type="number" step="0.1" inputmode="decimal" id="dWeight" /></label>
+            <label>Calories <input type="number" inputmode="numeric" id="dCalories" /></label>
+            <label>Protein (g) <input type="number" inputmode="numeric" id="dProtein" /></label>
+            <label>Steps <input type="number" inputmode="numeric" id="dSteps" /></label>
+            <label>Sleep (h) <input type="number" step="0.5" inputmode="decimal" id="dSleep" /></label>
+            <label class="check"><input type="checkbox" id="dPrep" /> Meal prep done today</label>
+          </div>
+          <label>Notes <textarea id="dNotes" rows="2"></textarea></label>
+          <button class="btn btn-primary" type="submit">Save day</button>
+          <span class="saved" id="dailySaved"></span>
+        </form>
+
+        <form id="bodyForm" class="card">
+          <div class="card-head">
+            <h2>Weekly waist</h2>
+            <input type="date" id="bodyDay" required />
+          </div>
+          <p class="muted small">Measure at the navel, same day each week, before eating.</p>
+          <div class="grid-2">
+            <label>Waist (in) <input type="number" step="0.1" inputmode="decimal" id="bWaist" required /></label>
+            <label>Notes <input type="text" id="bNotes" /></label>
+          </div>
+          <button class="btn btn-primary" type="submit">Save waist</button>
+          <span class="saved" id="bodySaved"></span>
+        </form>
+      </div>
+
+      <!-- WORKOUT -->
+      <div class="tab-panel" id="tab-workout" hidden>
+        <form id="workoutForm" class="card">
+          <div class="card-head">
+            <h2>Log a session</h2>
+            <input type="date" id="wDay" required />
+          </div>
+          <label>Session <select id="wSession"></select></label>
+          <p class="muted small" id="wSuggest"></p>
+          <h3>Top sets</h3>
+          <p class="muted small">Your heaviest working set for each main lift. Leave blank to skip.</p>
+          <div id="liftRows"></div>
+          <button class="btn btn-small btn-secondary" type="button" id="addLift">+ Add lift</button>
+          <label>Notes <textarea id="wNotes" rows="2"></textarea></label>
+          <button class="btn btn-primary" type="submit">Save session</button>
+          <span class="saved" id="workoutSaved"></span>
+        </form>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="tab-panel" id="tab-progress" hidden>
+        <div class="callout" id="adjustCallout"></div>
+        <div class="kpis" id="kpis"></div>
+
+        <div class="card chart-card">
+          <h2>Bodyweight</h2>
+          <p class="muted small">Dots are daily weigh-ins; the line is the 7-day average. Shaded band is the target pace for the current phase.</p>
+          <div class="chart-wrap"><canvas id="chartWeight"></canvas></div>
+        </div>
+
+        <div class="grid-charts">
+          <div class="card chart-card">
+            <h2>Protein</h2>
+            <div class="chart-wrap short"><canvas id="chartProtein"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h2>Waist</h2>
+            <div class="chart-wrap short"><canvas id="chartWaist"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <h2>Sessions per week</h2>
+            <div class="chart-wrap short"><canvas id="chartSessions"></canvas></div>
+          </div>
+          <div class="card chart-card">
+            <div class="card-head">
+              <h2>Strength</h2>
+              <select id="liftPick"></select>
+            </div>
+            <p class="muted small">Estimated 1-rep max from your top set (Epley).</p>
+            <div class="chart-wrap short"><canvas id="chartLift"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="tab-panel" id="tab-history" hidden>
+        <div class="card">
+          <h2>Recent days</h2>
+          <div class="table-wrap"><table id="histDaily"></table></div>
+        </div>
+        <div class="card">
+          <h2>Recent sessions</h2>
+          <div class="table-wrap"><table id="histWorkouts"></table></div>
+        </div>
+        <div class="card">
+          <h2>Account</h2>
+          <button class="btn btn-small btn-secondary" type="button" id="changePin">Change PIN</button>
+          <button class="btn btn-small btn-secondary" type="button" id="signOut">Sign out of this device</button>
+        </div>
+      </div>
+
+    </main>
+  </section>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="tracker.js"></script>
+</body>
+</html>
