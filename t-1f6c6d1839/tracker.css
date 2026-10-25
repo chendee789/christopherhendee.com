@@ -116,10 +116,22 @@ label.check input { width: auto; margin: 0; }
 }
 .tabs button.active { color: var(--text); border-bottom-color: var(--primary); }
 
-/* Lift rows */
-.lift-row { display: grid; grid-template-columns: 1.3fr 1fr .8fr auto; gap: 8px; align-items: end; margin-bottom: 8px; }
-.lift-row input, .lift-row select { margin: 0; }
-.lift-row .rm { background: none; border: 0; color: var(--muted); font-size: 1.2rem; cursor: pointer; padding: 8px; }
+/* Exercise cards */
+.ex { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; margin-bottom: 10px; background: var(--bg); }
+.ex-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.ex-name { font-weight: 700; }
+.ex-name input { margin: 0; font-weight: 600; }
+.ex-target { font-size: .82rem; color: var(--muted); }
+.ex-tag { display: inline-block; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--primary); margin-right: 6px; }
+.ex-swap, .ex-rm { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font: inherit; font-size: .78rem; padding: 3px 8px; cursor: pointer; white-space: nowrap; }
+.ex-last { font-size: .82rem; margin-top: 6px; }
+.ex-sugg { font-size: .82rem; margin-top: 2px; color: var(--muted); }
+.ex-sugg.good { color: var(--primary); }
+.ex-sugg.warn { color: var(--warn); }
+.ex-inputs { display: grid; gap: 6px; margin-top: 10px; align-items: end; }
+.ex-inputs label { margin: 0; font-size: .72rem; }
+.ex-inputs input { margin-top: 2px; padding: 8px 6px; text-align: center; }
+label.spaced { margin-top: 12px; }
 
 /* KPIs */
 .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 16px; }

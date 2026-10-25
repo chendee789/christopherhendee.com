@@ -244,65 +244,182 @@
     toast("Waist saved");
   });
 
-  // ---------- workout form ----------
-  const defaultLifts = { "Upper A": ["Bench", "Row", "OHP"], "Lower A": ["Squat", "RDL"], "Upper B": ["Row", "OHP"], "Lower B": ["Deadlift", "Squat"], "Other": [] };
-  const rotation = ["Upper A", "Lower A", "Upper B", "Lower B"];
+  // ---------- program + workout form ----------
+  const prog = window.TRACKER_PROGRAM;
+  const rotation = prog.rotation;
+  const mainLifts = Object.values(prog.sessions).flatMap((s) => s.exercises.filter((x) => x.main).flatMap((x) => [x.a, x.b]))
+    .filter((v, i, arr) => arr.indexOf(v) === i);
+  const round5 = (x) => Math.round(x / 5) * 5;
 
-  function lastSet(lift) {
-    for (let i = data.lifts.length - 1; i >= 0; i--) if (data.lifts[i].lift === lift) return data.lifts[i];
-    return null;
+  // Program week for a date: 0 before the start, then 1, 2, 3...
+  function progWeek(day) {
+    const start = cfg.phases[0].start;
+    return day < start ? 0 : Math.floor(daysBetween(start, day) / 7) + 1;
   }
-  function addLiftRow(lift) {
-    const row = document.createElement("div");
-    row.className = "lift-row";
-    const opts = cfg.lifts.map((l) => `<option${l === lift ? " selected" : ""}>${esc(l)}</option>`).join("");
-    row.innerHTML = `
-      <label>Lift <select class="lLift">${opts}</select></label>
-      <label>Weight (lb) <input class="lWeight" type="number" step="2.5" inputmode="decimal" /></label>
-      <label>Reps <input class="lReps" type="number" inputmode="numeric" /></label>
-      <button type="button" class="rm" aria-label="Remove">&times;</button>`;
-    const hint = () => {
-      const ls = lastSet(row.querySelector(".lLift").value);
-      row.querySelector(".lWeight").placeholder = ls ? `last ${ls.weight_lb}` : "";
-      row.querySelector(".lReps").placeholder = ls ? `last ${ls.reps}` : "";
-    };
-    row.querySelector(".lLift").addEventListener("change", hint);
-    row.querySelector(".rm").addEventListener("click", () => row.remove());
-    hint();
-    $("liftRows").appendChild(row);
+  const variantFor = (day) => (progWeek(day) % 2 === 0 && progWeek(day) > 0 ? "b" : "a");
+  const isDeload = (day) => { const w = progWeek(day); return w > 0 && w % prog.deloadEvery === 0; };
+
+  // Logged sets for one exercise grouped by session, oldest first.
+  function historyFor(name) {
+    const groups = new Map();
+    for (const s of data.lifts) {
+      if (s.lift !== name) continue;
+      const k = s.workout_id ?? s.day;
+      if (!groups.has(k)) groups.set(k, { day: s.day, weight: Number(s.weight_lb), reps: [] });
+      const g = groups.get(k);
+      g.weight = Math.max(g.weight, Number(s.weight_lb));
+      g.reps.push(s.reps);
+    }
+    return [...groups.values()].sort((a, b) => a.day.localeCompare(b.day));
   }
-  function setLiftRowsFor(session) {
-    $("liftRows").innerHTML = "";
-    (defaultLifts[session] || []).forEach(addLiftRow);
+  const fmtSets = (g, bw) => `${bw && !g.weight ? "BW" : `${g.weight} lb`} × ${g.reps.join(", ")}`;
+
+  function suggest(ex, name, bw, day) {
+    const [lo, hi] = ex.reps;
+    const hist = historyFor(name);
+    const last = hist[hist.length - 1] || null;
+    const work = hist.filter((g) => !isDeload(g.day) && g.day < day);
+    const ref = work[work.length - 1];
+    const deload = isDeload(day);
+    if (!ref) {
+      return { last, weight: null, cls: "",
+        text: bw ? "First time: bodyweight; add weight once you hit " + hi + " on every set."
+                 : `First time: pick a weight you could do ${hi + 2} times. Stop each set with 1–2 reps left.` };
+    }
+    let w = ref.weight, cls = "", text;
+    const hitTop = ref.reps.length >= ex.sets && ref.reps.every((r) => r >= hi);
+    const missed = ref.reps.some((r) => r < lo);
+    const prev = work[work.length - 2];
+    if (hitTop) { w = ref.weight + ex.inc; cls = "good"; text = `Add ${ex.inc} lb: you hit ${hi} on every set last time.`; }
+    else if (missed && prev && prev.weight === ref.weight && prev.reps.some((r) => r < lo)) {
+      w = bw ? ref.weight : round5(ref.weight * 0.9); cls = "warn"; text = `Missed ${lo} reps twice at ${ref.weight} lb. Drop ~10% and build back up.`;
+    }
+    else text = `Stay at ${bw && !ref.weight ? "bodyweight" : ref.weight + " lb"} and beat last time's reps.`;
+    if (deload) { w = bw ? 0 : round5(w * 0.9); cls = ""; text = `Deload week: ~10% lighter, one fewer set, leave 3+ reps in the tank.`; }
+    return { last, weight: w, cls, text };
   }
+
+  function exerciseCard(ex, variant, day) {
+    const deload = isDeload(day);
+    const name = ex[variant];
+    const bw = !!(ex.bw || (variant === "a" && ex.bwA));
+    const sets = deload ? Math.max(2, ex.sets - 1) : ex.sets;
+    const s = suggest(ex, name, bw, day);
+    const el = document.createElement("div");
+    el.className = "ex";
+    el.dataset.name = name;
+    const canSwap = ex.a !== ex.b;
+    el.innerHTML = `
+      <div class="ex-head">
+        <div>
+          <div class="ex-name">${ex.main ? '<span class="ex-tag">Main</span>' : ""}${esc(name)}</div>
+          <div class="ex-target">${sets} × ${ex.reps[0]}–${ex.reps[1]}${ex.perLeg ? "/leg" : ""} · +${ex.inc} lb when you hit ${ex.reps[1]} on every set</div>
+          ${canSwap ? `<div class="ex-target">Alternate: ${esc(ex[variant === "a" ? "b" : "a"])}</div>` : ""}
+        </div>
+        ${canSwap ? `<button type="button" class="ex-swap" title="Use the alternate exercise">Swap</button>` : ""}
+      </div>
+      <div class="ex-last">${s.last ? `Last: ${esc(fmtSets(s.last, bw))} · ${fmtDay(s.last.day)}` : '<span class="muted">No history yet</span>'}</div>
+      <div class="ex-sugg ${s.cls}">${esc(s.text)}</div>
+      <div class="ex-inputs" style="grid-template-columns: 1.5fr repeat(${sets}, 1fr)">
+        <label>${bw ? "Added lb" : "Weight (lb)"}<input class="exW" type="number" step="2.5" inputmode="decimal" value="${s.weight ?? (bw ? 0 : "")}" /></label>
+        ${Array.from({ length: sets }, (_, i) => `<label>Set ${i + 1}<input class="exR" type="number" inputmode="numeric" placeholder="${s.last && s.last.reps[i] != null ? s.last.reps[i] : ""}" /></label>`).join("")}
+      </div>`;
+    if (canSwap) el.querySelector(".ex-swap").addEventListener("click", () => el.replaceWith(exerciseCard(ex, variant === "a" ? "b" : "a", day)));
+    return el;
+  }
+
+  function customCard() {
+    const el = document.createElement("div");
+    el.className = "ex";
+    el.innerHTML = `
+      <div class="ex-head">
+        <div class="ex-name" style="flex:1"><input class="exName" type="text" placeholder="Exercise name" list="exNames" /></div>
+        <button type="button" class="ex-rm">Remove</button>
+      </div>
+      <div class="ex-inputs" style="grid-template-columns: 1.5fr repeat(3, 1fr)">
+        <label>Weight (lb)<input class="exW" type="number" step="2.5" inputmode="decimal" /></label>
+        <label>Set 1<input class="exR" type="number" inputmode="numeric" /></label>
+        <label>Set 2<input class="exR" type="number" inputmode="numeric" /></label>
+        <label>Set 3<input class="exR" type="number" inputmode="numeric" /></label>
+      </div>`;
+    el.querySelector(".ex-rm").addEventListener("click", () => el.remove());
+    el.querySelector(".exName").addEventListener("input", (e) => (el.dataset.name = e.target.value.trim()));
+    return el;
+  }
+
+  function renderSession() {
+    const day = $("wDay").value || today();
+    const session = $("wSession").value;
+    const v = variantFor(day);
+    const wk = progWeek(day);
+    const nextDeload = wk === 0 ? prog.deloadEvery : Math.ceil((wk + (isDeload(day) ? 1 : 0)) / prog.deloadEvery) * prog.deloadEvery;
+    $("weekInfo").className = "callout" + (isDeload(day) ? " warn" : "");
+    $("weekInfo").innerHTML = wk === 0
+      ? `<strong>Pre-program week · Variation A</strong>Program week 1 starts ${fmtDay(cfg.phases[0].start)}. Use this week to find your starting weights.`
+      : `<strong>Week ${wk} · Variation ${v.toUpperCase()}${isDeload(day) ? " · Deload" : ""}</strong>` +
+        (isDeload(day) ? "Lighter week to recover: the weights below are already reduced." : `Variations alternate weekly. Next deload: week ${nextDeload}.`);
+    const list = $("exList");
+    list.innerHTML = "";
+    const s = prog.sessions[session];
+    if (s) {
+      const f = document.createElement("p");
+      f.className = "muted small";
+      f.textContent = s.focus;
+      list.appendChild(f);
+      s.exercises.forEach((ex) => list.appendChild(exerciseCard(ex, v, day)));
+    }
+  }
+
+  function renderLastWeights() {
+    const names = [...new Set(data.lifts.map((s) => s.lift))];
+    const rows = names.map((n) => {
+      const h = historyFor(n), last = h[h.length - 1];
+      const best = Math.max(...data.lifts.filter((s) => s.lift === n).map((s) => e1rm(Number(s.weight_lb), s.reps)));
+      return { n, last, best };
+    }).sort((a, b) => b.last.day.localeCompare(a.last.day) || a.n.localeCompare(b.n));
+    $("lastWeights").innerHTML = `<tr><th>Exercise</th><th>Last</th><th>Date</th><th class="num">Best e1RM</th></tr>` +
+      (rows.length ? rows.map((r) => `<tr><td>${esc(r.n)}</td><td>${esc(fmtSets(r.last, !r.last.weight))}</td><td>${fmtDay(r.last.day)}</td><td class="num">${r.best ? Math.round(r.best) : "—"}</td></tr>`).join("")
+        : `<tr><td colspan="4" class="muted">Log a session to see your weights here.</td></tr>`);
+    let dl = $("exNames");
+    if (!dl) { dl = document.createElement("datalist"); dl.id = "exNames"; document.body.appendChild(dl); }
+    dl.innerHTML = names.map((n) => `<option value="${esc(n)}">`).join("");
+  }
+
   function setupWorkoutForm() {
     $("wDay").value = today();
-    $("wSession").innerHTML = cfg.sessions.map((s) => `<option>${esc(s)}</option>`).join("");
+    $("wSession").innerHTML = rotation.map((s) => `<option>${esc(s)}</option>`).join("");
     const last = [...data.workouts].reverse().find((w) => rotation.includes(w.session));
-    const next = last ? rotation[(rotation.indexOf(last.session) + 1) % rotation.length] : "Upper A";
+    const next = last ? rotation[(rotation.indexOf(last.session) + 1) % rotation.length] : rotation[0];
     $("wSession").value = next;
-    $("wSuggest").textContent = last ? `Next in rotation after ${last.session} (${fmtDay(last.day)}).` : "Start the rotation with Upper A.";
-    setLiftRowsFor(next);
+    $("wSuggest").textContent = last ? `Next in rotation after ${last.session} (${fmtDay(last.day)}).` : `Start the rotation with ${rotation[0]}.`;
+    renderSession();
+    renderLastWeights();
   }
-  $("wSession").addEventListener("change", () => setLiftRowsFor($("wSession").value));
-  $("addLift").addEventListener("click", () => addLiftRow(cfg.lifts[0]));
+  $("wSession").addEventListener("change", renderSession);
+  $("wDay").addEventListener("change", renderSession);
+  $("addEx").addEventListener("click", () => $("exList").appendChild(customCard()));
   $("workoutForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const day = $("wDay").value;
-    const sets = [...$("liftRows").querySelectorAll(".lift-row")]
-      .map((r) => ({ lift: r.querySelector(".lLift").value, weight_lb: num(r.querySelector(".lWeight").value), reps: num(r.querySelector(".lReps").value) }))
-      .filter((s) => s.weight_lb && s.reps);
+    const sets = [];
+    for (const card of $("exList").querySelectorAll(".ex")) {
+      const name = card.dataset.name;
+      const w = num(card.querySelector(".exW").value);
+      const reps = [...card.querySelectorAll(".exR")].map((i) => num(i.value)).filter((r) => r != null && r > 0);
+      if (!name || !reps.length) continue;
+      if (w == null) { toast(`Add a weight for ${name} (0 = bodyweight)`); return; }
+      reps.forEach((r) => sets.push({ lift: name, weight_lb: w, reps: r }));
+    }
+    if (!sets.length) { toast("Enter reps for at least one exercise"); return; }
     const { data: w, error } = await sb.from("workouts")
       .insert({ user_id: user.id, day, session: $("wSession").value, notes: $("wNotes").value.trim() || null })
       .select().single();
     if (error) { toast("Save failed: " + error.message); return; }
     data.workouts.push(w);
-    if (sets.length) {
-      const rows = sets.map((s) => ({ ...s, user_id: user.id, day, workout_id: w.id }));
-      const { data: ins, error: e2 } = await sb.from("lift_sets").insert(rows).select();
-      if (e2) { toast("Lifts failed: " + e2.message); return; }
-      data.lifts.push(...ins);
-    }
+    const rows = sets.map((s) => ({ ...s, user_id: user.id, day, workout_id: w.id }));
+    const { data: ins, error: e2 } = await sb.from("lift_sets").insert(rows).select();
+    if (e2) { toast("Sets failed to save: " + e2.message); return; }
+    data.lifts.push(...ins);
     data.workouts.sort((a, b) => a.day.localeCompare(b.day) || a.id - b.id);
     data.lifts.sort((a, b) => a.day.localeCompare(b.day) || a.id - b.id);
     $("wNotes").value = "";
@@ -335,7 +452,7 @@
   function liftsDropping() {
     // lifts whose last two top sets are both 5%+ below that lift's best in the prior 6 weeks
     const t = today(), out = [];
-    for (const lift of cfg.lifts) {
+    for (const lift of mainLifts) {
       const xs = data.lifts.filter((s) => s.lift === lift && s.day > addDays(t, -42)).map((s) => ({ day: s.day, v: e1rm(s.weight_lb, s.reps) }));
       if (xs.length < 4) continue;
       const lastTwo = xs.slice(-2), best = Math.max(...xs.slice(0, -2).map((x) => x.v));
@@ -515,9 +632,13 @@
 
     // Strength
     const pick = $("liftPick");
-    if (!pick.options.length) {
-      pick.innerHTML = cfg.lifts.map((l) => `<option>${esc(l)}</option>`).join("");
-      pick.value = store.get("trk-lift") || cfg.lifts[0];
+    const logged = [...new Set(data.lifts.map((s) => s.lift))];
+    const choices = [...mainLifts, ...logged.filter((n) => !mainLifts.includes(n)).sort()];
+    const want = pick.value || store.get("trk-lift") || mainLifts[0];
+    pick.innerHTML = choices.map((l) => `<option>${esc(l)}</option>`).join("");
+    pick.value = choices.includes(want) ? want : mainLifts[0];
+    if (!pick.dataset.bound) {
+      pick.dataset.bound = "1";
       pick.addEventListener("change", () => { store.set("trk-lift", pick.value); drawCharts(); });
     }
     const best = {};
@@ -544,9 +665,14 @@
 
     const ws = [...data.workouts].reverse().slice(0, 40);
     $("histWorkouts").innerHTML =
-      `<tr><th>Day</th><th>Session</th><th>Top sets</th><th>Notes</th><th></th></tr>` +
+      `<tr><th>Day</th><th>Session</th><th>Sets</th><th>Notes</th><th></th></tr>` +
       (ws.length ? ws.map((w) => {
-        const sets = data.lifts.filter((s) => s.workout_id === w.id).map((s) => `${s.lift} ${s.weight_lb}×${s.reps}`).join(", ");
+        const byEx = new Map();
+        data.lifts.filter((s) => s.workout_id === w.id).forEach((s) => {
+          if (!byEx.has(s.lift)) byEx.set(s.lift, { w: s.weight_lb, reps: [] });
+          byEx.get(s.lift).reps.push(s.reps);
+        });
+        const sets = [...byEx].map(([n, g]) => `${n} ${Number(g.w) ? g.w : "BW"}×${g.reps.join("/")}`).join(" · ");
         return `<tr><td>${fmtDay(w.day)}</td><td>${esc(w.session)}</td><td>${esc(sets)}</td><td>${esc(w.notes)}</td>
           <td><button data-del-workout="${w.id}" aria-label="Delete">&times;</button></td></tr>`;
       }).join("") : `<tr><td colspan="5" class="muted">No sessions yet.</td></tr>`);

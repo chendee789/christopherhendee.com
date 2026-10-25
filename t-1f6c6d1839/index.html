@@ -111,6 +111,7 @@
 
       <!-- WORKOUT -->
       <div class="tab-panel" id="tab-workout" hidden>
+        <div class="callout" id="weekInfo"></div>
         <form id="workoutForm" class="card">
           <div class="card-head">
             <h2>Log a session</h2>
@@ -118,14 +119,19 @@
           </div>
           <label>Session <select id="wSession"></select></label>
           <p class="muted small" id="wSuggest"></p>
-          <h3>Top sets</h3>
-          <p class="muted small">Your heaviest working set for each main lift. Leave blank to skip.</p>
-          <div id="liftRows"></div>
-          <button class="btn btn-small btn-secondary" type="button" id="addLift">+ Add lift</button>
-          <label>Notes <textarea id="wNotes" rows="2"></textarea></label>
+          <p class="muted small">Weight is pre-filled with today's suggestion. Enter the reps you got on each set; leave a whole exercise blank to skip it.</p>
+          <div id="exList"></div>
+          <button class="btn btn-small btn-secondary" type="button" id="addEx">+ Add exercise</button>
+          <label class="spaced">Notes <textarea id="wNotes" rows="2"></textarea></label>
           <button class="btn btn-primary" type="submit">Save session</button>
           <span class="saved" id="workoutSaved"></span>
         </form>
+
+        <div class="card">
+          <h2>Last weights</h2>
+          <p class="muted small">Most recent working weight for every exercise you've logged.</p>
+          <div class="table-wrap"><table id="lastWeights"></table></div>
+        </div>
       </div>
 
       <!-- PROGRESS -->
@@ -157,7 +163,7 @@
               <h2>Strength</h2>
               <select id="liftPick"></select>
             </div>
-            <p class="muted small">Estimated 1-rep max from your top set (Epley).</p>
+            <p class="muted small">Estimated 1-rep max from your best set each session (Epley).</p>
             <div class="chart-wrap short"><canvas id="chartLift"></canvas></div>
           </div>
         </div>
@@ -186,6 +192,7 @@
   <div class="toast" id="toast" role="status"></div>
 
   <script src="config.js"></script>
+  <script src="program.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <script src="tracker.js"></script>

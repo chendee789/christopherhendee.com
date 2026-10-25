@@ -13,7 +13,5 @@ window.TRACKER_CONFIG = {
   ],
   sessionsPerWeek: 4,
   stepsTarget: 8000,
-  lifts: ["Squat", "Bench", "Deadlift", "RDL", "OHP", "Row"],
-  sessions: ["Upper A", "Lower A", "Upper B", "Lower B", "Other"],
   lockAfterMinutes: 5
 };
