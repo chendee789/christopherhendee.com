@@ -1,9 +1,9 @@
-// Supabase project settings (Project Settings -> API).
+// Supabase project settings (Project Settings -> API keys).
 // The anon key is meant to be public: Row Level Security (schema.sql) is what
 // keeps the data private. Never put the service_role key here.
 window.TRACKER_CONFIG = {
-  supabaseUrl: "PASTE_PROJECT_URL_HERE",       // e.g. https://abcdefgh.supabase.co
-  supabaseAnonKey: "PASTE_ANON_PUBLIC_KEY_HERE",
+  supabaseUrl: "https://khgigelyofpxmbmlccps.supabase.co",       // e.g. https://abcdefgh.supabase.co
+  supabaseAnonKey: "sb_publishable_eMDZ6DJAMG-vm7V1WAa2hg_a1YPkpcR",
 
   // Plan phases from the Recomp Plan doc.
   phases: [
